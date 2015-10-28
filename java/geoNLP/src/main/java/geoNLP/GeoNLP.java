@@ -1,6 +1,7 @@
 package geoNLP;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -144,30 +146,62 @@ public class GeoNLP {
 	    // save location to an output file
 	    saveLocation(writer, item_id, location);
 	}
-
-	private static void traverse(String fIn, String fOut, StanfordCoreNLP pipeline) {
-		try (PrintWriter writer = new PrintWriter(fOut, "UTF-8")) {
-			try (BufferedReader br = new BufferedReader(new FileReader(fIn))) {
-				String line;
-				while ((line = br.readLine()) != null) {
-					// each line is a JSON formatted string
-					final JSONObject obj = new JSONObject(line);
-					final String stream_type = obj.getString("stream_type");
-					String item_id = null;
-					String text = null;
-					if (stream_type.equals("Twitter")) {
-						item_id = obj.getString("id_str");
-						text = obj.getString("text");
-					}
-					processElem(pipeline, item_id, text, writer);
+	
+	private static Boolean isValidFileName(String fileName) {
+		Boolean result = false;
+		// make sure we accept *_orig.txt files only
+		String[] parts = fileName.split("\\.");
+		if (parts.length == 2) {
+			String fName = parts[0];
+			String fExt = parts[1];
+			if (fExt.equals("txt")) {
+				parts = fName.split("_");
+				if (parts.length >= 2) {
+					if (parts[parts.length - 1].equals("orig"))
+						result = true;
 				}
-			} catch (JSONException | IOException e) {
+			}
+		}
+		return result;
+	}
+	
+	private static String getOutputFileName(String fileName) {
+		// output file name will be *_nlp.txt
+		String[] parts = fileName.split("\\.");
+		String fName = parts[0];
+		String fExt = parts[1];
+		parts = fName.split("_");
+		String fOut = Joiner.on("_").join(Arrays.copyOfRange(parts, 0, parts.length-1))+"_nlp."+fExt;
+		return fOut;
+	}
+
+	private static void traverse(String inDir, String outDir, StanfordCoreNLP pipeline) {
+		for (File file : new File(inDir).listFiles()) {
+			if (!isValidFileName(file.getName())) continue;
+			String fOut = getOutputFileName(file.getName());
+			try (PrintWriter writer = new PrintWriter(fOut, "UTF-8")) {
+				try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+					String line;
+					while ((line = br.readLine()) != null) {
+						// each line is a JSON formatted string
+						final JSONObject obj = new JSONObject(line);
+						final String stream_type = obj.getString("stream_type");
+						String item_id = null;
+						String text = null;
+						if (stream_type.equals("Twitter")) {
+							item_id = obj.getString("id_str");
+							text = obj.getString("text");
+						}
+						processElem(pipeline, item_id, text, writer);
+					}
+				} catch (JSONException | IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} catch (FileNotFoundException | UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} catch (FileNotFoundException | UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 
@@ -178,9 +212,18 @@ public class GeoNLP {
 		final Properties props = new Properties();
 	    props.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse");
 	    final StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+	    
+	    String inDir = System.getProperty("user.dir");
+	    String outDir = System.getProperty("user.dir");
+	    if (args.length > 0) {
+	    	inDir = args[0];
+	    }
+	    if (args.length > 1) {
+	    	outDir = args[1];
+	    }
 
-	    // traverse the files
-	    traverse("month_analyze_2014_1.txt", "month_analyze_2014_1_nlp.txt", pipeline);
+	    // traverse the *_orig.txt files in a given directory
+	    traverse(inDir, outDir, pipeline);
 
 	    // print execution time
 		final long duration = (System.nanoTime() - t0);

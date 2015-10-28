@@ -1,4 +1,0 @@
-{'stream_type': 'Twitter', 'id_str': '114', 'text': 'Landslide video: bridge in Gilgit city after the quake #PakistanEarthquake'}
-{'stream_type': 'Twitter', 'id_str': '113', 'text': 'Landslide caused by deadly Pakistan earthquake caught on camera http://www.mirror.co.uk/news/world-news/landslide-caused-deadly-pakistan-earthquake-6709912#ICID=sharebar_twitter … '}
-{'stream_type': 'Twitter', 'id_str': '111', 'text': 'There was a mudslide and people died in Washington State last night. Vladimir Putin returned back to Russia after a long landslide in Sochi.'}
-{'stream_type': 'Twitter', 'id_str': '112', 'text': 'Fracking, landslide blamed for contamination of Northern B.C. creek http://www.cbc.ca/1.3286858'}
