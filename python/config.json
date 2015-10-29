@@ -1,0 +1,42 @@
+{
+    "db_host": "127.0.0.1",
+    "db_port": 3306,
+    "db_passwd": "db_passwd",
+    "db_user": "db_user",
+    "db_db": "db_db",
+    "keywords": {
+        "landslide": {
+            "en": ["landslide", "mudslide", "landslides", "mudslides", "rockslide", "rockslides", "rockfall", "landslip", "flooding"],
+            "ru": ["сель", "селевой", "селевые", "селевого", "селевых", "оползень", "оползня", "оползнем", "оползни", "оползневый", "оползневые", "оползней"],
+            "it": ["frana", "fango"],
+            "pt": ["deslizamento", "desmoronamento", "desabamento"],
+            "ja": ["土砂崩れ", "山崩れ"],
+            "zh": ["滑坡", "塌方", "泥石流", "坍塌"],
+            "hi": ["भूस्खलन"]
+        },
+        "hab": {
+            "en": ["algal blooms","harmful algal","red tide algal"]
+        },
+         "typhoon": {
+            "en": ["typhoon"]
+        }
+    },
+    "stop_words": {
+        "landslide": {
+            "en": ["brittany","cocktail","conservative","dessert","dixie","election","elected","elections","electoral","fleetwood","fleetwoodmac","football","game","lesbian","paramore","parliament","poll","polls","porno","presidential","risk","sings","study","victorious","victory","vote","voted","votes","voters","warning","warnings","warns","win","wins","won"]
+        }
+    },
+    "stop_phrases": {
+        "landslide": {
+            "en": ["cafe latte chat","caught beneath the landslide","generation landslide","lyin on a landslide with","lying on a landslide with","maui mudslide","may cause","no escape from reality","of california to smoke","on a landslide with a bag","real madrid","some day you will find me","smashing pumpkins","stevie nicks"]
+        }
+    },
+    "skip_keywords": {
+        "landslide": {
+            "en": ["mudslide"]
+        }
+    },
+    "google_application_key": "google_application_key",
+    "locations": "locations.txt"
+}
+
