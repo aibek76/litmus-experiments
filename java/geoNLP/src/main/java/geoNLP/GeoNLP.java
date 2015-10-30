@@ -85,7 +85,7 @@ public class GeoNLP {
 
     private static String getLocation(List<CoreMap> sentences) {
         final ArrayList<String> searchTerms = getSearchTerms("landslide", "en",
-                "config.js");
+                "config.json");
 
         // variables to maintain location with the minimum
         // distance to one of the search terms
