@@ -85,14 +85,14 @@ def traverse(in_dir, out_dir):
     
     locations = load_locations()
 
-    for _, _, fileList in walk(in_dir):
+    for root, _, fileList in walk(in_dir):
         for fname in fileList:
             if not is_valid_fname(fname):
                 continue
             fout = get_output_fname(fname)
             fpath = path.join(out_dir, fout)
             with open(fpath, 'w') as f:
-                for line in open(fname):
+                for line in open(path.join(root, fname)):
                     parts = line.rstrip().split('\t')
                     if len(parts) != 2: continue
                     item_id, address = parts

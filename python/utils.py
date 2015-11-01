@@ -12,3 +12,6 @@ def generate_cell(N, E, coef=0.04166666666667):
 
     return key
 
+def get_words_in_string(inputString):
+    from re import findall
+    return findall(r'(?u)\w+', inputString)
