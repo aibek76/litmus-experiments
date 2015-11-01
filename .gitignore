@@ -1,1 +1,7 @@
 java/.metadata/
+
+python/config.json
+
+python/utils.pyc
+
+*.pyc
