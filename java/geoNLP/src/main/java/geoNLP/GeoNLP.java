@@ -12,10 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -144,8 +142,12 @@ public class GeoNLP {
     private static void processElem(StanfordCoreNLP pipeline, String item_id,
             String text, PrintWriter writer) {
         // annotate text
-        final Annotation document = new Annotation(text);
-        pipeline.annotate(document);
+        String s = text.replaceAll("https?://\\S+\\s?", "").replaceAll("[^\\x00-\\x7F]", "");
+        final int N = 700;
+        if (s.length() >= N) {
+            s = s.substring(0, N - 1);
+        }
+        final Annotation document = pipeline.process(s);
         // retrieve sentences
         final List<CoreMap> sentences = document.get(SentencesAnnotation.class);
         // collect location
@@ -164,7 +166,7 @@ public class GeoNLP {
             if (fExt.equals("txt")) {
                 parts = fName.split("_");
                 if (parts.length >= 2) {
-                    if (parts[parts.length - 1].equals("orig"))
+                    if (parts[parts.length - 1].equals("train") || parts[parts.length - 1].equals("test"))
                         result = true;
                 }
             }
@@ -178,9 +180,7 @@ public class GeoNLP {
         String fName = parts[0];
         String fExt = parts[1];
         parts = fName.split("_");
-        String fOut = Joiner.on("_").join(
-                Arrays.copyOfRange(parts, 0, parts.length - 1))
-                + "_nlp." + fExt;
+        String fOut = fName + "_nlp." + fExt;
         return fOut;
     }
 
@@ -203,6 +203,15 @@ public class GeoNLP {
                         if (stream_type.equals("Twitter")) {
                             item_id = obj.getString("id_str");
                             text = obj.getString("text");
+                        } else if (stream_type.equals("Instagram")) {
+                            item_id = obj.getString("id");
+                            text = obj.getJSONObject("caption").getString("text");
+                        } else if (stream_type.equals("YouTube")) {
+                            item_id = obj.getJSONObject("id").getString("videoId");
+                            text = obj.getJSONObject("snippet").getString("title");
+                        } else {
+                            System.out.println("stream_type "+stream_type+" is not supported!");
+                            continue;
                         }
                         processElem(pipeline, item_id, text, writer);
                     }

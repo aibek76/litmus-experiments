@@ -54,10 +54,9 @@ def w2v_get_model():
     return model
 
 def w2v_vectors(dta, item_id, text, f):
-    print 'w2v_vectors: item_id = %s, text = %s' % (item_id, text)
     vector = dta.txt2avg_vector(text, is_html=False)
     if vector is None:
-        print text
+        print 'Coult not generate Word2Vec vector for %s' % text
         return
     vector = [0.0 if v==None else str(v) for v in vector]
     f.write('%s\t%s\n' % (item_id, '\t'.join(vector)))
@@ -71,14 +70,22 @@ def is_valid_fname(fname):
         if ext=='txt':
             parts = name.split('_')
             if len(parts)>=2:
-                if parts[-1]=='geo':
+                if parts[-1]=='labels':
                     result = True
     return result
 
-def get_fn_orig(fname):
+def get_fn_geo(fname):
+    # replace _labels with _geo in *_labels.txt
     name, ext = fname.split('.')
     parts = name.split('_')
-    fout = '_'.join(parts[:-1])+'_orig.'+ext
+    fout = '_'.join(parts[:-1])+'_geo.'+ext
+    return fout
+
+def get_fn_orig(fname):
+    # remove _labels from *_labels.txt
+    name, ext = fname.split('.')
+    parts = name.split('_')
+    fout = '_'.join(parts[:-1])+'.'+ext
     return fout
 
 def get_texts(fname):
@@ -90,12 +97,19 @@ def get_texts(fname):
         if data['stream_type']=='Twitter':
             item_id = data['id_str']
             text = data['text']
+        elif data['stream_type']=='Instagram':
+            item_id = data['id']
+            text = data['caption']['text']
+        elif data['stream_type']=='YouTube':
+            item_id = data['id']['videoId']
+            text = data['snippet']['title']
         if item_id==None or text==None:
             continue
         texts[item_id] = text
     return texts
 
 def get_output_fname(fname):
+    # replace _labels with _w2v in *_labels.txt
     name, ext = fname.split('.')
     parts = name.split('_')
     fout = '_'.join(parts[:-1])+'_w2v.'+ext
@@ -114,9 +128,9 @@ def traverse(in_dir, out_dir):
             fout = get_output_fname(fname)
             fpath = path.join(out_dir, fout)
             with open(fpath, 'w') as f:
-                fn_geo = path.join(root, fname)
+                fn_geo = get_fn_geo(path.join(root, fname))
                 print 'fn_geo: %s' % fn_geo
-                fn_orig = get_fn_orig(fn_geo)
+                fn_orig = get_fn_orig(path.join(root, fname))
                 print 'fn_orig: %s' % fn_orig
                 if not path.isfile(fn_orig):
                     continue

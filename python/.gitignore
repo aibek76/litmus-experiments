@@ -1,1 +1,5 @@
 *.pyc
+*_geo.txt
+*_nlp.txt
+locations.txt
+temp.py

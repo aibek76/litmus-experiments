@@ -74,6 +74,7 @@ def save_location(f, item_id, lat, lng, cell):
     f.write('%s\t%s\t%s\t%s\n' % (item_id, lat, lng, cell))
 
 def get_output_fname(fname):
+    # replace '*_nlp.txt' with '*_geo.txt'
     name, ext = fname.split('.')
     parts = name.split('_')
     fout = '_'.join(parts[:-1])+'_geo.'+ext

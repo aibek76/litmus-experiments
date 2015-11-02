@@ -55,15 +55,15 @@ public class BuildModel {
 
     private static Boolean isValidFileName(String fileName) {
         Boolean result = false;
-        // make sure we accept *_w2v.txt files only
+        // make sure we accept *_train_w2v.arff files only
         String[] parts = fileName.split("\\.");
         if (parts.length == 2) {
             String fName = parts[0];
             String fExt = parts[1];
             if (fExt.equals("arff")) {
                 parts = fName.split("_");
-                if (parts.length >= 2) {
-                    if (parts[parts.length - 1].equals("train"))
+                if (parts.length >= 3) {
+                    if (parts[parts.length - 2].equals("train") && parts[parts.length - 1].equals("w2v"))
                         result = true;
                 }
             }
